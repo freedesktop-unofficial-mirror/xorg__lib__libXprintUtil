@@ -1,35 +1,37 @@
 /* -*- Mode: C++; tab-width: 2; indent-tabs-mode: nil; c-basic-offset: 2 -*- */
 #ifndef XPRINTUTIL_H
 #define XPRINTUTIL_H 1
-/******************************************************************************
- ******************************************************************************
- **
- ** (c) Copyright 2001-2004 Roland Mainz <roland.mainz@nrubsig.org>
- ** 
- ** Permission is hereby granted, free of charge, to any person obtaining a copy
- ** of this software and associated documentation files (the "Software"), to deal
- ** in the Software without restriction, including without limitation the rights
- ** to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
- ** copies of the Software, and to permit persons to whom the Software is
- ** furnished to do so, subject to the following conditions:
- **
- ** The above copyright notice and this permission notice shall be included in
- ** all copies or substantial portions of the Software.
- **
- ** THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
- ** IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
- ** FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT.  IN NO EVENT SHALL THE
- ** COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER LIABILITY, WHETHER
- ** IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN
- ** CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
- **
- ** Except as contained in this notice, the names of the copyright holders shall
- ** not be used in advertising or otherwise to promote the sale, use or other
- ** dealings in this Software without prior written authorization from said
- ** copyright holders.
- **
- ******************************************************************************
- *****************************************************************************/
+/* 
+ * The contents of this file are subject to the Mozilla Public
+ * License Version 1.1 (the "License"); you may not use this file
+ * except in compliance with the License. You may obtain a copy of
+ * the License at http://www.mozilla.org/MPL/
+ * 
+ * Software distributed under the License is distributed on an "AS
+ * IS" basis, WITHOUT WARRANTY OF ANY KIND, either express or
+ * implied. See the License for the specific language governing
+ * rights and limitations under the License.
+ * 
+ * The Original Code is the X11 print system utilities library.
+ * 
+ * The Initial Developer of the Original Code is Roland Mainz 
+ * <roland.mainz@nrubsig.org>.
+ * All Rights Reserved.
+ * 
+ * Contributor(s):
+ * 
+ * Alternatively, the contents of this file may be used under the
+ * terms of the GNU General Public License Version 2 or later (the
+ * "GPL"), in which case the provisions of the GPL are applicable 
+ * instead of those above.  If you wish to allow use of your 
+ * version of this file only under the terms of the GPL and not to
+ * allow others to use your version of this file under the MPL,
+ * indicate your decision by deleting the provisions above and
+ * replace them with the notice and other provisions required by
+ * the GPL.  If you do not delete the provisions above, a recipient
+ * may use your version of this file under either the MPL or the
+ * GPL.
+ */
 
 /* Force ANSI C prototypes from X11 headers */
 #ifndef FUNCPROTO 
@@ -87,12 +89,11 @@ typedef struct {
 /*
  * Struct for XpuGetResolutionList(), XpuFreeResolutionList(),
  * XpuGetResolution(), XpuSetPageResolution(), XpuSetDocResolution(),
- * XpuFindResolutionByName()
+ * XpuFindResolution()
  */
 typedef struct {
-  const char *name;
-  long        x_dpi;
-  long        y_dpi;
+  long dpi;
+  /* ToDo: Support for Xdpi != Ydpi */
 } XpuResolutionRec, *XpuResolutionList;
 
 /*
@@ -112,14 +113,6 @@ typedef struct {
   const char *plex;
 } XpuPlexRec, *XpuPlexList;
 
-/*
- * Struct for XpuGetColorspaceList(), XpuFreeColorspaceList()
- */
-typedef struct
-{
-  const char  *name;
-  XVisualInfo  visualinfo;
-} XpuColorspaceRec, *XpuColorspaceList;
 
 /* XPUATTRIBUTESUPPORTED_*:
  * Flags which indicate whether it is allowed to set/change a specific attribute
@@ -137,7 +130,6 @@ typedef long XpuSupportedFlags;
 #define XPUATTRIBUTESUPPORTED_DEFAULT_INPUT_TRAY           (1L<<7)
 #define XPUATTRIBUTESUPPORTED_DEFAULT_MEDIUM               (1L<<8)
 #define XPUATTRIBUTESUPPORTED_PLEX                         (1L<<9)
-#define XPUATTRIBUTESUPPORTED_LISTFONTS_MODES              (1L<<10)
 
 /* prototypes */
 _XFUNCPROTOBEGIN
@@ -145,7 +137,6 @@ _XFUNCPROTOBEGIN
 int XpuCheckExtension( Display *pdpy );
 
 /* Create/destroy connection to printer */
-Bool XpuXprintServersAvailable( void );
 int XpuGetPrinter( const char *printername, Display **pdpyptr, XPContext *pcontextptr );
 void XpuClosePrinterDisplay(Display *pdpy, XPContext pcontext);
 
@@ -187,10 +178,10 @@ XpuFindMediumSourceSizeByName( XpuMediumSourceSizeList mlist, int mlist_count,
 /* Get/Set resolution */
 XpuResolutionList XpuGetResolutionList( Display *pdpy, XPContext pcontext, int *numEntriesPtr );
 void XpuFreeResolutionList( XpuResolutionList list );
-Bool XpuGetResolution( Display *pdpy, XPContext pcontext, long *x_dpi, long *y_dpi );
+Bool XpuGetResolution( Display *pdpy, XPContext pcontext, long *dpi );
 Bool XpuSetPageResolution( Display *pdpy, XPContext pcontext, XpuResolutionRec * );
 Bool XpuSetDocResolution( Display *pdpy, XPContext pcontext, XpuResolutionRec * );
-XpuResolutionRec *XpuFindResolutionByName( XpuResolutionList list, int list_count, const char *resolution_name);
+XpuResolutionRec *XpuFindResolution( XpuResolutionList list, int list_count, long min_dpi, long max_dpi );
 
 /* Get/Set orientation */
 XpuOrientationList XpuGetOrientationList( Display *pdpy, XPContext pcontext, int *numEntriesPtr );
@@ -207,15 +198,6 @@ XpuPlexRec *XpuFindPlexByName( XpuPlexList list, int list_count, const char *ple
 int XpuSetDocPlex( Display *pdpy, XPContext pcontext, XpuPlexRec *rec );
 int XpuSetPagePlex( Display *pdpy, XPContext pcontext, XpuPlexRec *rec );
 
-/* Set/get usage of fonts */
-Bool XpuGetEnableFontDownload( Display *pdpy, XPContext pcontext );
-int XpuSetEnableFontDownload( Display *pdpy, XPContext pcontext, Bool enableFontDownload );
-
-/* Get per-printer colorspace information */
-XpuColorspaceList XpuGetColorspaceList( Display *pdpy, XPContext pcontext, int *numEntriesPtr );
-void XpuFreeColorspaceList( XpuColorspaceList list );
-XpuColorspaceRec *XpuFindColorspaceByName( XpuColorspaceList list, int list_count, const char *colorspace );
-
 /* Start job to printer (spooler) or file */
 void XpuStartJobToSpooler(Display *pdpy);
 void *XpuStartJobToFile( Display *pdpy, XPContext pcontext, const char *filename );
@@ -225,18 +207,6 @@ XPGetDocStatus XpuWaitForPrintFileChild( void *handle );
 XpuSupportedFlags XpuGetSupportedJobAttributes(Display *pdpy, XPContext pcontext);
 XpuSupportedFlags XpuGetSupportedDocAttributes(Display *pdpy, XPContext pcontext);
 XpuSupportedFlags XpuGetSupportedPageAttributes(Display *pdpy, XPContext pcontext);
-
-/* Encode/decode resource strings */
-char *XpuResourceEncode( const char *str );
-char *XpuResourceDecode( const char *str );
-void XpuResourceFreeString( char *s );
-
-/* COMPOUND_TEXT <----> local encoding string converters */
-const char *XpuXmbToCompoundText(Display *dpy, const char *xmbtext);
-void XpuFreeCompundTextString( const char *s );
-const char *XpuCompoundTextToXmb(Display *dpy, const char *ct);
-void XpuFreeXmbString( const char *s );
-
 
 _XFUNCPROTOEND
 
