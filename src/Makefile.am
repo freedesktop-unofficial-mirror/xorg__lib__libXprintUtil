@@ -8,6 +8,7 @@ INCLUDES = -I$(top_srcdir)/include/X11/XprintUtil
 
 
 libXprintUtil_la_LIBADD = @DEP_LIBS@
+libXprintUtil_la_CFLAGS = @DEP_CFLAGS@
 
 libXprintUtil_la_LDFLAGS = -version-info 7:0:0 -no-undefined
 
