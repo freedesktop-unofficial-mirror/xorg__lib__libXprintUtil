@@ -1,6 +1,6 @@
 lib_LTLIBRARIES = libXprintUtil.la
 
-libXprintUtil_la_SOURCES = \ 
+libXprintUtil_la_SOURCES = \
          xprintutil.c \
          xprintutil_printtofile.c
 
