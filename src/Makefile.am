@@ -10,10 +10,8 @@ INCLUDES = -I$(top_srcdir)/include/X11/XprintUtil
 libXprintUtil_la_LIBADD = @DEP_LIBS@
 AM_CFLAGS = @DEP_CFLAGS@
 
-libXprintUtil_la_LDFLAGS = -version-info 7:0:0 -no-undefined
-
+libXprintUtil_la_LDFLAGS = -version-number 1:0:0 -no-undefined
 
 libXprintUtilincludedir = $(includedir)/X11/XprintUtil
 libXprintUtilinclude_HEADERS = \
     $(top_srcdir)/include/X11/XprintUtil/xprintutil.h
-
