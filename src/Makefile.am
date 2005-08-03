@@ -7,8 +7,8 @@ libXprintUtil_la_SOURCES = \
 INCLUDES = -I$(top_srcdir)/include/X11/XprintUtil
 
 
-libXprintUtil_la_LIBADD = @DEP_LIBS@
-AM_CFLAGS = @DEP_CFLAGS@
+libXprintUtil_la_LIBADD = @XPRINTUTIL_LIBS@
+AM_CFLAGS = @XPRINTUTIL_CFLAGS@
 
 libXprintUtil_la_LDFLAGS = -version-number 1:0:0 -no-undefined
 
