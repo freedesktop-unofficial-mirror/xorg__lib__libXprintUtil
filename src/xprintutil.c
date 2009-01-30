@@ -52,7 +52,7 @@ static const char XPServerListSeparators[] = " \t\v\n\r\f";
  * If Xlib API gets fixed these macros can be turned into empty 
  * placeholders... (|#define MAKE_STRING_WRITABLE(x)|) :-)
  */
-#define MAKE_STRING_WRITABLE(str) (((str)?((str) = strdup(str)):0))
+#define MAKE_STRING_WRITABLE(str) (((str)?((str) = strdup(str)): NULL))
 #define FREE_WRITABLE_STRING(str) free((void *)(str))
 #define STRING_AS_WRITABLE(str) ((char *)(str))
 
@@ -76,7 +76,9 @@ static void XpuDisposeEnumerateMediumSourceSizes( void **vc );
 
 int XpuCheckExtension( Display *pdpy )
 {
+#ifdef DEBUG
   char *display = XDisplayString(pdpy);
+#endif
   short major = 0,
         minor = 0;
 
@@ -214,8 +216,6 @@ int XpuGetPrinter2( char *printer, char *display, Display **pdpyptr, XPContext *
 /* acceps "printer" or "printer@display" */
 int XpuGetPrinter( const char *arg_printername, Display **pdpyptr, XPContext *pcontextptr )
 {
-  Display       *pdpy;
-  XPContext      pcontext;
   char          *printername;
   char          *s;
   char          *tok_lasts;
@@ -490,7 +490,6 @@ static
 const char *search_next_space(const char *start)
 {
   const char *s     = start;
-  int         level = 0;
   
   if( !start )
     return(NULL);
@@ -669,7 +668,6 @@ Bool XpuParseMediumSourceSize( const char *value,
   char       *boolbuf;
   size_t      value_len;
   int         num_input_items;
-  const char *cur_locale;
   
   if( value && value[0]!='{' && value[0]!='\0' )
     return(False);
@@ -969,7 +967,6 @@ XpuMediumSourceSizeList XpuGetMediumSourceSizeList( Display *pdpy, XPContext pco
                           ma2,
                           ma3,
                           ma4;
-  char                   *value;
   void                   *tok_lasts;
   const char             *tray_name,
                          *medium_name;

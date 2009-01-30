@@ -1,3 +1,5 @@
+.deps
+.libs
 aclocal.m4
 autom4te.cache
 compile
@@ -19,3 +21,9 @@ mkinstalldirs
 stamp-h1
 xprintutil.pc
 *~
+*.o
+*.la
+*.lo
+libXprintUtil-*.tar.*
+ChangeLog
+tags
